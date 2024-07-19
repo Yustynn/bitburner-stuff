@@ -5,17 +5,31 @@ const URL = "http://localhost:2139/save"
 const TIMEOUT = 1000
 
 
-export function getStocksValue(ns: NS): number {
-    let value = ns.getServerMoneyAvailable("home")
-
-    for (const sym of ns.stock.getSymbols()) {
-        const n = ns.stock.getPosition(sym)[0]
-        const price = ns.stock.getPrice(sym)
-
-        value += n * price
+export function getStocksPositionValue(stockPositionInfo: Record): number {
+    let value = 0
+    for (const {numHeld, price} of Object.values(stockPositionInfo)) {
+        value += numHeld * price
     }
 
     return value
+}
+
+export function getStockPositionInfo(ns: NS): Record {
+    const symInfo = {}
+
+    for (const sym of ns.stock.getSymbols()) {
+        const numHeld = ns.stock.getPosition(sym)[0]
+        const price = ns.stock.getPrice(sym)
+
+        if (numHeld > 0) {
+            symInfo[sym] = {
+                numHeld,
+                price
+            }
+        }
+    }
+
+    return symInfo
 }
 
 function mkHostInfo(ns: NS, timestamp: date): Record {
@@ -31,8 +45,8 @@ function mkHostInfo(ns: NS, timestamp: date): Record {
     return hostInfo
 }
 
-function mkPlayerMetrics(ns: NS): Record {
-    const stocksValue = getStocksValue(ns)
+function mkPlayerMetrics(ns: NS, stocksPositionInfo: Record): Record {
+    const stocksValue = getStocksPositionValue(stocksPositionInfo)
     const cashOnHand = ns.getServerMoneyAvailable("home")
     const netWorth = stocksValue + cashOnHand
 
@@ -55,9 +69,10 @@ export async function main(ns : NS) : undefined {
     while (true) {
         const timestamp = Date.now()
         const hostInfo = mkHostInfo(ns, timestamp)
-        const playerInfo = mkPlayerMetrics(ns)
+        const stocksPositionInfo = getStockPositionInfo(ns)
+        const playerInfo = mkPlayerMetrics(ns, stocksPositionInfo)
 
-        const data = {hostInfo, playerInfo, timestamp}
+        const data = { hostInfo, playerInfo, stocksPositionInfo }
 
         await fetch(URL, {
             method: 'POST', 

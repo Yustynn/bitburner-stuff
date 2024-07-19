@@ -12,6 +12,7 @@ TIMEOUT = 0.5
 # Create a metric to track time spent and requests made.
 host_info = Gauge("host_info", "Description of Guage", labelnames=["host", "metric"])
 player_info = Gauge("player_info", "Description of Guage", labelnames=["category", "metric"])
+stocks_info = Gauge("stocks_info", "Description of Guage", labelnames=["symbol", "value"])
 
 # Decorate function with metric.
 def process_request():
@@ -27,13 +28,16 @@ def process_request():
                     for metric, value in metrics.items():
                         player_info.labels(category, metric).set(value)
 
-                print("Data processed successfully")
+                for symbol, info in data['stocksPositionInfo'].items():
+                    for value_name, value in info.items():
+                        stocks_info.labels(symbol, value_name).set(value)
+
+                print(f"Data processed successfully. Random number: {random()} | Net worth: {data['playerInfo']['money']['netWorth']} | Num Hosts: {len(data['hostInfo'])}")
         except:
             print("Error processing data")
             traceback.print_exc()
         finally:
-            # os.remove(INPUT_FILEPATH)
-            pass
+            os.remove(INPUT_FILEPATH)
     sleep(0.5)
 
 if __name__ == '__main__':
