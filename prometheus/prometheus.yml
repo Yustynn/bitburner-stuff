@@ -1,0 +1,8 @@
+# my global config
+global:
+  scrape_interval: 2s
+
+scrape_configs:
+  - job_name: yus-scrape
+    static_configs:
+      - targets: ["host.docker.internal:8923"] # defaults to /metrics on server
