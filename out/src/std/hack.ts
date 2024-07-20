@@ -7,7 +7,9 @@ export async function main(ns: NS): undefined {
   while (true) {
     if (ns.getServerMoneyAvailable(host) >= minAmt) {
       ns.print("state: HACK_START")
+      await ns.sleep(100)
       await ns.hack(host)
+      await ns.sleep(100)
       ns.print("state: HACK_END")
     }
     else {

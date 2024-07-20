@@ -1,4 +1,5 @@
 import { NS } from '@ns'
+import { logExec } from "/runners/logExec.js"
 
 export async function main(ns : NS) : undefined {
     const host = ns.args[0]
@@ -16,5 +17,5 @@ export async function main(ns : NS) : undefined {
 
     ns.tprint(`Assigning ${host} to run ${file} (${nThreads} threads, ${ramUsed}GB RAM) with args ${args}`)
 
-    ns.exec(file, host, nThreads, ...args)
+    await logExec(ns, file, host, nThreads, args)
 }

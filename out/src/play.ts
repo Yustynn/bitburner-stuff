@@ -1,10 +1,9 @@
 import { NS } from '@ns'
+import { getLog } from '/utils/state.js'
 
-export async function main(ns : NS) : Promise<void> {
-    const file = "std/weaken.js"
-    ns.tprint("Running: ", ns.scriptRunning(file, "home"))
-    ns.tprint(ns.getScriptLogs(file, "home", "iron-gym"))
+export async function main(ns : NS) : undefined {
+    const log = await getLog(ns)
+    const host = "serve-1"
+    const { pid, args } = log[host][1]
+    ns.tprint(ns.getScriptLogs(pid, host, ...args))
 }
-
-// GROW_END | WEAKEN_END | HACK_END
-// server, nthreads, time, value, hackingLvl, securityLvl, serverMinHackingLevel

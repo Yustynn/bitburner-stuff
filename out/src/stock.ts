@@ -41,7 +41,7 @@ export function getPicks(ns: NS): Array<Record> {
 }
 
 function sellPosition(ns: NS, pos: Record): undefined {
-  ns.tprint(pos)
+  // ns.tprint(pos)
   const { buyPrice, sym } = pos
   const  numShares = ns.stock.getPosition(sym)[0]
   const sellPrice = ns.stock.sellStock(sym, numShares)
@@ -51,8 +51,8 @@ function sellPosition(ns: NS, pos: Record): undefined {
 
   const profit = (sellPrice - buyPrice)*numShares - 2*COMMISSION
 
-  ns.tprint(`Sold ${sym} (${numShares} shares), profit of ${profit/(10**6)}M`)
-  ns.tprint(`Total profit so far from sales: ${getCurrProfit()/10**6}M`)
+  // ns.tprint(`Sold ${sym} (${numShares} shares), profit of ${profit/(10**6)}M`)
+  // ns.tprint(`Total profit so far from sales: ${getCurrProfit()/10**6}M`)
   ns.toast(`Total profit so far from sales: ${getCurrProfit()/10**6}M`)
 }
 
@@ -95,7 +95,7 @@ function sellWeakPositions(ns) {
     const profit = (symInfo.price - pos.buyPrice) * pos.numShares
     
     if (profit >= UPGRADE_PROFIT_THRESHOLD && topScore / symInfo.score >= UPGRADE_SCORE_THRESHOLD) {
-      ns.tprint(`Exiting weak position ${JSON.stringify(pos)}`)
+      // ns.tprint(`Exiting weak position ${JSON.stringify(pos)}`)
       sellPosition(ns, pos)
     }
     else {
@@ -123,27 +123,27 @@ function buyGoodStock(ns: NS)  {
 
     let result = ns.stock.buyStock(sym, numSharesToBuy)
     if (result == 0) {
-      ns.tprint('ERROR: Could not buy the following:')
-      ns.tprint(`\t${sym} (${numSharesToBuy} shares) for ${numSharesToBuy * buyPrice / (10 ** 6)}M (${buyPrice} each)`)
+      // ns.toast('ERROR: Could not buy the following:')
+      // ns.toast(`\t${sym} (${numSharesToBuy} shares) for ${numSharesToBuy * buyPrice / (10 ** 6)}M (${buyPrice} each)`)
       numSharesToBuy *= 0.9
       result = ns.stock.buyStock(sym, numSharesToBuy)
       if (result == 0) {
-        ns.tprint('ERROR: Could not buy the following:')
-        ns.tprint(`\t${sym} (${numSharesToBuy} shares) for ${numSharesToBuy * buyPrice / (10 ** 6)}M (${buyPrice} each)`)
-        ns.tprint('Giving up.')
+        ns.toast('ERROR: Could not buy the following:')
+        ns.toast(`\t${sym} (${numSharesToBuy} shares) for ${numSharesToBuy * buyPrice / (10 ** 6)}M (${buyPrice} each)`)
+        ns.toast('Giving up.')
         continue
       }
-      ns.tprint('SUCCESS: Bought 90% of the volume')
-      ns.tprint(`\t${sym} (${numSharesToBuy} shares) for ${numSharesToBuy * buyPrice / (10 ** 6)}M (${buyPrice} each)`)
+      // // ns.tprint('SUCCESS: Bought 90% of the volume')
+      // ns.tprint(`\t${sym} (${numSharesToBuy} shares) for ${numSharesToBuy * buyPrice / (10 ** 6)}M (${buyPrice} each)`)
 
     }
 
     budget -= result * numSharesToBuy - COMMISSION
     openPositions.push({ sym, numShares: numSharesToBuy, buyPrice })
 
-    ns.tprint(`Picked ${JSON.stringify(pick)}`)
-    ns.tprint(`Bought ${sym} (${numSharesToBuy} shares) for ${numSharesToBuy * buyPrice / (10 ** 6)}M (${buyPrice} each)`)
-    ns.toast(`Bought ${sym} (${numSharesToBuy} shares) for ${numSharesToBuy * buyPrice / (10 ** 6)}M (${buyPrice} each)`)
+    // ns.tprint(`Picked ${JSON.stringify(pick)}`)
+    // ns.tprint(`Bought ${sym} (${numSharesToBuy} shares) for ${numSharesToBuy * buyPrice / (10 ** 6)}M (${buyPrice} each)`)
+    // ns.toast(`Bought ${sym} (${numSharesToBuy} shares) for ${numSharesToBuy * buyPrice / (10 ** 6)}M (${buyPrice} each)`)
   }
 
 }
